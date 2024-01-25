@@ -9,15 +9,17 @@ screen.bgcolor("black")
 screen.title("Breakout")
 screen.tracer(0)
 
+tolerance_x = 51
+tolerance_y = 11
 
 number_of_squares = 10
+all_blocks = []
 
 
 def create_row(num, height, color, offset):
     spacer = -600 + offset
-    all_blocks = []
     for _ in range(num):
-        # time.sleep(0.1)
+        # time.sleep(0.2)
         screen.update()
         block_name = f"Block_{color}_{_}"
         block = Block((spacer, height), color, block_name)
@@ -36,20 +38,34 @@ def refresh_blocks():
     create_row(10, 130, "purple", 160)
 
 
-def get_mouse_click_coor(x, y):
+def delete_block(x, y):
     x_coord = x
     y_coord = y
-    print(x_coord, y_coord)
+    click_coords = (x_coord, y_coord)
+    # print(click_coords)
+
+    for block in all_blocks:
+        block_coords = tuple(block.pos())
+        # print(block_coords)
+
+        # Check if the differences between corresponding coordinates are within the tolerances
+        if abs(block_coords[0] - click_coords[0]) < tolerance_x and abs(block_coords[1] - click_coords[1]) < tolerance_y:
+            block.goto(-1000, 1000)
+
     screen.update()
 
 
-screen.onscreenclick(get_mouse_click_coor)
+screen.onscreenclick(delete_block)
 
 
 refresh_blocks()
 
 screen.update()
 
+print(all_blocks)
+print(all_blocks[0].pos())
+all_blocks[0].goto(-1000, 1000)
+screen.update()
 
 screen.listen()
 
