@@ -36,11 +36,15 @@ boop_sfx = pygame.mixer.Sound("sounds/Boop.wav")
 
 def play_boop():
     # Play the sound
-    channel = pygame.mixer.find_channel()
-    channel.play(boop_sfx)
+    try:
+        channel = pygame.mixer.find_channel()
+        channel.play(boop_sfx)
+    except AttributeError:
+        pass
 
 
 def create_row(num, height, color, offset):
+
     spacer = -600 + offset
     for _ in range(num):
         # time.sleep(0.2)
@@ -53,6 +57,12 @@ def create_row(num, height, color, offset):
         print(block_name)
 
 
+def hide_all():
+    for block in all_blocks:
+        block.hideturtle()
+    all_blocks.clear()
+
+
 def refresh_blocks():
     create_row(10, 280, "red", 0)
     create_row(10, 250, "orange", 10)
@@ -63,11 +73,9 @@ def refresh_blocks():
 
 
 game_on = True
-
 refresh_blocks()
 
 while game_on:
-    # screen.onscreenclick(delete_block)
     time.sleep(ball.move_speed)
     ball.move()
     screen.update()
@@ -81,7 +89,9 @@ while game_on:
 
     if ball.ycor() < -290:
         ball.reset_position()
+        hide_all()
         refresh_blocks()
+        screen.update()
 
     # Detect collision with paddles
     if ball.distance(paddle) < 70 and ball.ycor() < -250:
